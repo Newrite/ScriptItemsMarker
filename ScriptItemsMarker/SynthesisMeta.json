@@ -1,0 +1,11 @@
+{
+  "Nickname": "ScriptItemsMarker",
+  "Visibility": "Visible",
+  "OneLineDescription": "Add keyword to armor and weapons with script",
+  "LongDescription": "Add keyword to armor and weapons with script",
+  "PreferredAutoVersioning": "Default",
+  "RequiredMods": [],
+  "TargetedReleases": [
+    "SkyrimSE"
+  ]
+}
