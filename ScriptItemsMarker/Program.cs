@@ -30,8 +30,6 @@ public class Settings
 public static class Program
 {
   static Lazy<Settings> _settings = new();
-  private static Settings Settings { get; set; } = null!;
-
   public static async Task<int> Main(string[] args)
   {
     return await SynthesisPipeline.Instance.AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
