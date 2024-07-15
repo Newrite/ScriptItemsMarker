@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 [JsonObject(ItemRequired = Required.Always)]
 public partial class Config
 {
-  [JsonProperty("weightSettings")] public KeywordSetting KeywordSetting { get; set; }
+  [JsonProperty("keywordSetting")] public KeywordSetting KeywordSetting { get; set; }
 
   [JsonConstructor]
   private Config(KeywordSetting keywordSetting)
@@ -29,7 +29,7 @@ public partial class Config
 public class KeywordSetting
 {
   [JsonProperty("modname")] public string ModName { get; set; } = "SomeEsp.esp";
-  [JsonProperty("formid")] public ulong FormId { get; set; } = 0x0;
+  [JsonProperty("formid")] public string FormId { get; set; } = "0x800";
 }
 
 public partial class Settings
