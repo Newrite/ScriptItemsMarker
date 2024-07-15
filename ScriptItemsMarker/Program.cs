@@ -24,7 +24,7 @@ public class Settings
   
   [SettingName("Keyword Form Id")]
   [Tooltip("Form Id of keyword in mod")]
-  public ulong FormId = 0x800;
+  public uint FormId = 0x800;
 }
 
 public static class Program
@@ -55,8 +55,35 @@ public static class Program
     var modName = _settings.Value.ModName;
     var formId = _settings.Value.FormId;
     
-    SynthesisLog($"Item Weight Configuration: {modName} {formId}", true);
+    SynthesisLog($"Script Items Marker Settings: {modName} {formId}", true);
+    
+    if (!state.LoadOrder.ContainsKey(modName))
+      throw new Exception($"ERROR: {modName} not found in load order");
 
+    var modKey = ModKey.FromNameAndExtension(modName);
+    var formKey = new FormKey(modKey, formId);
+    
+    var exclusiveKeyword = state.LinkCache.Resolve<IKeywordGetter>(formKey);
+    if (exclusiveKeyword == null)
+      throw new Exception("ERROR: keyword not found in mod");
+    
+    foreach (var armor in state.LoadOrder.PriorityOrder.WinningOverrides<IArmorGetter>())
+    {
+      if (!(armor.VirtualMachineAdapter?.Scripts.Count > 0) || !armor.TemplateArmor.IsNull) continue;
+      var modifiedArmor = state.PatchMod.Armors.GetOrAddAsOverride(armor);
+      modifiedArmor.Keywords ??= new ExtendedList<IFormLinkGetter<IKeywordGetter>>();
+      modifiedArmor.Keywords.Add(exclusiveKeyword);
+      SynthesisLog($"Add keyword to armor: {modifiedArmor.EditorID}");
+    }
+    
+    foreach (var weapon in state.LoadOrder.PriorityOrder.WinningOverrides<IWeaponGetter>())
+    {
+      if (!(weapon.VirtualMachineAdapter?.Scripts.Count > 0) || !weapon.Template.IsNull) continue;
+      var modifiedWeapon = state.PatchMod.Weapons.GetOrAddAsOverride(weapon);
+      modifiedWeapon.Keywords ??= new ExtendedList<IFormLinkGetter<IKeywordGetter>>();
+      modifiedWeapon.Keywords.Add(exclusiveKeyword);
+      SynthesisLog($"Add keyword to weapon: {modifiedWeapon.EditorID}");
+    }
 
     SynthesisLog("Done patching script items marker!", true);
   }
