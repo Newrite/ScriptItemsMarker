@@ -84,6 +84,17 @@ public static class Program
       modifiedWeapon.Keywords.Add(exclusiveKeyword);
       SynthesisLog($"Add keyword to weapon: {modifiedWeapon.EditorID}");
     }
+    
+    foreach (var misc in state.LoadOrder.PriorityOrder.WinningOverrides<IMiscItemGetter>())
+    {
+      if (!(misc.VirtualMachineAdapter?.Scripts.Count > 0)) continue;
+      var modifiedMisc = state.PatchMod.MiscItems.GetOrAddAsOverride(misc);
+      modifiedMisc.Keywords ??= new ExtendedList<IFormLinkGetter<IKeywordGetter>>();
+      modifiedMisc.Keywords.Add(exclusiveKeyword);
+      SynthesisLog($"Add keyword to misc: {modifiedMisc.EditorID}");
+    }
+      
+      
 
     SynthesisLog("Done patching script items marker!", true);
   }
